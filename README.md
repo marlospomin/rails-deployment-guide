@@ -56,7 +56,7 @@ Note: Once you run `mina setup` it will create a new shared copy of this file un
 
 ## Mina
 
-After installing mina's gem add a new file under `/config` folder called `deploy.rb`, in that file add the following lines:
+After installing mina add a new file under `/config` folder called `deploy.rb`, in that file add the following lines:
 
 ``` ruby
 require "mina/rails"
