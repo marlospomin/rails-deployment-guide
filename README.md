@@ -27,6 +27,97 @@ Pro Tip: To check if nginx is installed type `which nginx` or `nginx -v`.
 Create your app directory: `sudo mkdir /var/www/your_app_name` and make sure to `chown` it to your non-root user. (`chown your_unix_username:your_unix_username -R /path/to/folder`)
 
 ## Nginx
+
+First, remove the default symlink under `rm /etc/nginx/sites-enabled/default` and create a new file with your site name under `/etc/nginx/sites-available`.
+
+Under `/etc/nginx/sites-available/your-site.com` add these lines:
+
+``` conf
+upstream your_app_name {
+  server unix:///var/www/your_app_name/shared/sockets/puma.sock fail_timeout=0;
+}
+
+server {
+  listen 80;
+  listen [::]:80;
+
+  server_name your-site.com;
+  root /var/www/your_app_name/current/public;
+
+  location @your_app_name {
+    proxy_pass http://your-site;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+  }
+
+  location ~ ^(assets|packs)/ {
+    gzip_static on;
+    expires max;
+    access_log off;
+    add_header Cache-Control public;
+    break;
+  }
+
+  try_files $uri/index.html $uri @puma;
+
+  location ~ ^/(500|404|422).html {
+    root /var/www/your_app_name/current/public;
+  }
+
+  error_page 500 522 404 /500.html;
+  client_max_body_size 10m;
+}
+```
+
+Now update your `nginx.conf` file under `/etc/nginx` with:
+
+``` conf
+user www-data;
+
+worker_processes auto;
+
+pid /run/nginx.pid;
+
+include /etc/nginx/modules-enabled/*.conf;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  keepalive_timeout 15;
+
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+
+  log_format main '$remote_addr - $remote_user [$time_local] '
+                  '"$request" $status  $body_bytes_sent "$http_referer" '
+                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
+
+  gzip on;
+  gzip_disable "msie6";
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 2;
+  gzip_http_version 1.1;
+  gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+  include /etc/nginx/conf.d/*.conf;
+  include /etc/nginx/sites-enabled/*;
+}
+```
+
+Now restart `nginx` with `sudo service nginx restart`.
+
+Off-Topic: Yes I know I gotta clean up this config.
+
 ## Puma
 
 Under `/config/puma.rb` update the file contents to:
