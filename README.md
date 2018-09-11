@@ -84,6 +84,9 @@ task :setup do
   command %{mkdir -p "#{fetch(:shared_path)}/sockets"}
 end
 
+# If you are using an older version of Rails remove `master.key`
+# entry from this file and replace it with `secrets.yml`.
+
 desc "Deploys the current version to the server."
 
 task :deploy do
