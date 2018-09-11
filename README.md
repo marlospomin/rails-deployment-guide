@@ -114,7 +114,7 @@ http {
 }
 ```
 
-Now restart `nginx` with `sudo service nginx restart`.
+Now symlink your config into the enabled sites `sudo ln -s /etc/nginx/sites-available/your-site.com /etc/nginx/sites-enabled/your-site.com` and restart `nginx` with `sudo service nginx restart`.
 
 Off-Topic: Yes I know I gotta clean up this config.
 
