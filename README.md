@@ -24,6 +24,8 @@ Nginx is also required, to install it use `apt install nginx` on your server if 
 
 Pro Tip: To check if nginx is installed type `which nginx` or `nginx -v`.
 
+Create your app directory: `sudo mkdir /var/www/your_app_name` and make sure to `chown` it to your non-root user. (`chown your_unix_username:your_unix_username -R /path/to/folder`)
+
 ## Nginx
 ## Puma
 
