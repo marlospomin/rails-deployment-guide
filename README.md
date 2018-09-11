@@ -111,11 +111,11 @@ task :deploy do
 end
 ```
 
-For extra help configuring Mina, head over to the documentation page at https://github.com/mina-deploy/mina.
+For extra help on configuring Mina, head over to the documentation page at https://github.com/mina-deploy/mina.
 
 ## Deploy
 
-After the configuration process is done run `mina setup` to setup the folder structure on your server.
+After the base configuration is done run `mina setup` to setup the folder structure on your server.
 
 Log in your server via `ssh` and the fill the shared files under `/var/www/your_app_name/shared/config` with your local file contents. This process is a one time only, or until you run `mina setup` again.
 
