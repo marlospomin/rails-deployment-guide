@@ -26,6 +26,32 @@ Pro Tip: To check if nginx is installed type `which nginx` or `nginx -v`.
 
 ## Nginx
 ## Puma
+
+Under `/config/puma.rb` update the file contents to:
+
+``` ruby
+# Specifies the amount of thread to power the server.
+threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
+threads threads_count, threads_count
+
+# Specifies the `environment` that Puma will run in.
+environment ENV.fetch("RAILS_ENV") { "development" }
+
+# Specifies the number of `workers` to boot in clustered mode.
+workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+
+# Use `preload_app!` method when specifying a `workers` number.
+preload_app!
+
+# Daemonize the server to run in the background in production.
+daemonize ENV.fetch("PUMA_DAEMONIZE") { false }
+
+# Allow puma to be restarted by `rails restart` command.
+plugin :tmp_restart
+```
+
+Note: Once you run `mina setup` it will create a new shared copy of this file under `/var/www/your_app_name/shared/config`, you will have to fill that file manually.
+
 ## Mina
 
 After installing mina's gem add a new file under `/config` folder called `deploy.rb`, in that file add the following lines:
@@ -85,6 +111,8 @@ For extra help configuring Mina, head over to the documentation page at https://
 ## Deploy
 
 After the configuration process is done run `mina setup` to setup the folder structure on your server.
+
+Log in your server via `ssh` and the fill the shared files under `/var/www/your_app_name/shared/config` with your local file contents. This process is a one time only, or until you run `mina setup` again.
 
 Run `mina deploy` to deploy.
 
