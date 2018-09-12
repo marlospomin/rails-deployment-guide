@@ -123,6 +123,9 @@ Off-Topic: Yes I know I gotta clean up this config.
 Under `/config/puma.rb` update the file contents to:
 
 ``` ruby
+# Specifies the bind socket location that Puma listens to.
+bind "unix:///var/www/your_app_name/shared/sockets/puma.sock"
+
 # Specifies the amount of thread to power the server.
 threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
 threads threads_count, threads_count
